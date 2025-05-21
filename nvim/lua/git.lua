@@ -1,6 +1,7 @@
 local gitsigns_loaded, gitsigns = pcall(require, 'gitsigns')
 local popup = require("plenary.popup")
 
+
 -- Initialize gitsigns with unified configuration
 if gitsigns_loaded then
   gitsigns.setup({
@@ -30,6 +31,8 @@ local function git_commit()
   end)
 end
 
+
+
 -- Key mappings
 vim.keymap.set('n', '<leader>hs', ':Gitsigns stage_hunk<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>hu', ':Gitsigns undo_stage_hunk<CR>', { noremap = true, silent = true })
@@ -39,7 +42,7 @@ vim.keymap.set('n', '<leader>hp', ':Gitsigns preview_hunk<CR>', { noremap = true
 -- Git Keybindings
 vim.keymap.set('n', '<leader>gp', ':!git pull<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>gc', git_commit, { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>gpp', ':!git push<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-gpp>', ':!git push<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>gf', ':!git fetch<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>gs', ':!git fetch && git pull --rebase && git push<CR>', { noremap = true, silent = true })
 
