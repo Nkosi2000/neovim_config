@@ -32,7 +32,6 @@ local function git_commit()
 end
 
 
-
 -- Key mappings
 vim.keymap.set('n', '<leader>hs', ':Gitsigns stage_hunk<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>hu', ':Gitsigns undo_stage_hunk<CR>', { noremap = true, silent = true })
