@@ -42,7 +42,7 @@ vim.keymap.set('n', '<leader>hp', ':Gitsigns preview_hunk<CR>', { noremap = true
 -- Git Keybindings
 vim.keymap.set('n', '<leader>gp', ':!git pull<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>gc', git_commit, { noremap = true, silent = true })
-vim.keymap.set('n', '<C-gpp>', ':!git push<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-gg>', ':!git push<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>gf', ':!git fetch<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>gs', ':!git fetch && git pull --rebase && git push<CR>', { noremap = true, silent = true })
 
