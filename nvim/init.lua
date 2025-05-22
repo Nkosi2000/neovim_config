@@ -1,5 +1,7 @@
 vim.opt.swapfile = false
 
+vim.opt.smarttab = true
+
 -- Ensure Packer is installed
 local ensure_packer = function()
   local fn = vim.fn
