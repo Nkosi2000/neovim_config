@@ -31,6 +31,55 @@ local function git_commit()
   end)
 end
 
+-- Function to prompt user for which files to add
+local function git_add()
+    -- Capture changed files
+    local handle = io.popen("git status --short | awk '{print $2}'")
+    if not handle then return end
+    local result = handle:read("*a")
+    handle:close()
+
+    -- Convert result into a list
+    local files = {}
+    for file in result:gmatch("[^\r\n]+") do
+        table.insert(files, file)
+    end
+
+    -- If no changes, notify user
+    if #files == 0 then
+        print("⚠️ No changes to add!")
+        return
+    end
+
+    -- Display files to the user
+    print("📂 Select files to stage:")
+    for i, file in ipairs(files) do
+        print(i .. ": " .. file)
+    end
+
+    -- Prompt user for file selection
+    local indices = vim.fn.input("Enter numbers (comma-separated): ")
+    if indices == "" then return end
+
+    -- Convert selection into a list of files
+    local files_to_add = {}
+    for index in indices:gmatch("%d+") do
+        local idx = tonumber(index)
+        if idx and files[idx] then
+            table.insert(files_to_add, files[idx])
+        end
+    end
+
+    -- Run `git add` on selected files
+    if #files_to_add > 0 then
+        local cmd = "git add " .. table.concat(files_to_add, " ")
+        vim.fn.system(cmd)
+        print("✅ Added: " .. table.concat(files_to_add, ", "))
+    else
+        print("⚠️ No files selected!")
+    end
+end
+
 
 -- Key mappings
 vim.keymap.set('n', '<leader>hs', ':Gitsigns stage_hunk<CR>', { noremap = true, silent = true })
@@ -39,11 +88,12 @@ vim.keymap.set('n', '<leader>hr', ':Gitsigns reset_hunk<CR>', { noremap = true, 
 vim.keymap.set('n', '<leader>hp', ':Gitsigns preview_hunk<CR>', { noremap = true, silent = true })
 
 -- Git Keybindings
-vim.keymap.set('n', '<leader>gp', ':!git pull<CR>', { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>gc', git_commit, { noremap = true, silent = true })
-vim.keymap.set('n', '<C-gg>', ':!git push<CR>', { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>gf', ':!git fetch<CR>', { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>gs', ':!git fetch && git pull --rebase && git push<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-l>', ':!git pull<CR>', { noremap = true, silent = true })
+vim.keymap.set({'n','c'}, '<C-a>', git_add, { noremap = true, silent = true })
+vim.keymap.set('n', '<C-c>', git_commit, { noremap = true, silent = true })
+vim.keymap.set('n', '<C-p>', ':!git push<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-f>', ':!git fetch<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-r>', ':!git fetch && git pull --rebase && git push<CR>', { noremap = true, silent = true })
 
 -- Git Create New Branch
 local function git_create_branch()
