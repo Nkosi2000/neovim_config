@@ -76,6 +76,49 @@ local function git_add()
     end)
 end
 
+function GitPushWithAuthCheck()
+    -- Get the remote repository URL dynamically
+    local repo_url = vim.fn.system("git config --get remote.origin.url"):gsub("%s+", "")
+
+    -- Check if Git can access the remote repository
+    local auth_test = vim.fn.system("git ls-remote " .. repo_url)
+
+    -- Authentication failed: Prompt user for credentials
+    if string.find(auth_test, "could not read Username") then
+        print("⚠️ GitHub authentication failed. Configuring credentials...")
+
+        -- Prompt for GitHub Username
+        local username = vim.fn.input("🔑 Enter GitHub Username: ")
+        vim.fn.system("git config --global user.name " .. username)
+
+        -- Prompt for GitHub Email
+        local email = vim.fn.input("📧 Enter GitHub Email: ")
+        vim.fn.system("git config --global user.email " .. email)
+
+        -- Check if user wants to use HTTPS or SSH
+        local auth_type = vim.fn.input("💡 Use HTTPS or SSH? (type 'https' or 'ssh'): ")
+
+        if auth_type == "https" then
+            -- Use stored credentials for HTTPS
+            vim.fn.system("git config --global credential.helper store")
+            print("🔒 Credentials stored permanently.")
+        elseif auth_type == "ssh" then
+            -- Ensure SSH key is added to the agent
+            vim.fn.system("ssh-add ~/.ssh/id_rsa")
+            print("🔑 SSH key added. Make sure it's linked to GitHub.")
+        else
+            print("❌ Invalid choice. Defaulting to HTTPS authentication.")
+            vim.fn.system("git config --global credential.helper store")
+        end
+
+        -- Retry push after setting credentials
+        print("✅ Credentials updated. Attempting push...")
+        vim.fn.system("git push")
+    else
+        print("✅ Authentication verified. Pushing changes...")
+        vim.fn.system("git push")
+    end
+end
 
 -- Key mappings
 vim.keymap.set('n', '<leader>hs', ':Gitsigns stage_hunk<CR>', { noremap = true, silent = true })
@@ -87,7 +130,7 @@ vim.keymap.set('n', '<leader>hp', ':Gitsigns preview_hunk<CR>', { noremap = true
 vim.keymap.set('n', '<C-l>', ':!git pull<CR>', { noremap = true, silent = true })
 vim.keymap.set({'n','c'}, '<C-a>', git_add, { noremap = true, silent = true })
 vim.keymap.set('n', '<C-c>', git_commit, { noremap = true, silent = true })
-vim.keymap.set('n', '<C-p>', ':!git push<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-p>', ':lua GitPushWithAuthCheck()<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<C-f>', ':!git fetch<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<C-r>', ':!git fetch && git pull --rebase && git push<CR>', { noremap = true, silent = true })
 
