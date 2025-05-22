@@ -34,50 +34,46 @@ end
 -- Function to prompt user for which files to add
 local function git_add()
     -- Capture changed files
-    local handle = io.popen("git status --short | awk '{print $2}'")
+    local handle = io.popen("git status --short")
     if not handle then return end
     local result = handle:read("*a")
     handle:close()
 
-    -- Convert result into a list
+    -- Process file list
     local files = {}
-    for file in result:gmatch("[^\r\n]+") do
-        table.insert(files, file)
-    end
+    for line in result:gmatch("[^\r\n]+") do
+        local status, file = line:match("^(.)(.+)$")
+        if status and file then
+            -- Assign icons based on status
+            local icon = ""  -- Default icon for changes
+            if status == "M" then icon = "" end  -- Modified
+            if status == "A" then icon = "" end  -- Added
+            if status == "?" then icon = "" end  -- Untracked
 
-    -- If no changes, notify user
-    if #files == 0 then
-        print("⚠️ No changes to add!")
-        return
-    end
-
-    -- Display files to the user
-    print("📂 Select files to stage:")
-    for i, file in ipairs(files) do
-        print(i .. ": " .. file)
-    end
-
-    -- Prompt user for file selection
-    local indices = vim.fn.input("Enter numbers (comma-separated): ")
-    if indices == "" then return end
-
-    -- Convert selection into a list of files
-    local files_to_add = {}
-    for index in indices:gmatch("%d+") do
-        local idx = tonumber(index)
-        if idx and files[idx] then
-            table.insert(files_to_add, files[idx])
+            table.insert(files, string.format("%s %s", icon, file))
         end
     end
 
-    -- Run `git add` on selected files
-    if #files_to_add > 0 then
-        local cmd = "git add " .. table.concat(files_to_add, " ")
-        vim.fn.system(cmd)
-        print("✅ Added: " .. table.concat(files_to_add, ", "))
-    else
-        print("⚠️ No files selected!")
+    if #files == 0 then
+        print("🚀 No changes to stage!")
+        return
     end
+
+    -- Open interactive file selection menu
+    vim.ui.select(files, { prompt = "📂 Select files to stage:" }, function(choice)
+        if not choice then
+            print("⚠️ No file selected!")
+            return
+        end
+
+        -- Extract filename from formatted list and add file
+        local filename = choice:match("%S+ (.+)")
+        if filename then
+            local cmd = "git add " .. filename
+            vim.fn.system(cmd)
+            print("✅ Added: " .. filename)
+        end
+    end)
 end
 
 
