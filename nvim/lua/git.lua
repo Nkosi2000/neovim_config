@@ -143,7 +143,7 @@ local function git_create_branch()
   end)
 end
 
-vim.keymap.set('n', '<leader>gb', git_create_branch, { noremap = true, silent = true })
+vim.keymap.set('n', '<C-b>', git_create_branch, { noremap = true, silent = true })
 
 -- Lualine configuration
 require('lualine').setup {
