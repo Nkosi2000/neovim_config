@@ -146,7 +146,7 @@ vim.keymap.set('n', '<C-x>', '!git branch -a<CR>', {noremap = true, silent = fal
 vim.keymap.set('n', '<C-s>', function()
   vim.ui.input({ prompt = "Enter branch name to switch to: " }, function(branch)
     if branch and branch ~= "" then
-      vim.cmd(':!git checkout ' .. branch)
+      vim.cmd('!git switch ' .. branch)
     end
   end)
 end, { noremap = true, silent = true })
