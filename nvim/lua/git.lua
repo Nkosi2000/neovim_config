@@ -142,7 +142,7 @@ vim.keymap.set('n', '<C-b>', function()
   end)
 end, { noremap = true, silent = true }) -- (git checkout -< branch >) Ctrl + b [ Create new branch ]
 
-vim.keymap.set('n', '<C-x>', ':!git branch<CR>', {noremap = true, silent = false})
+vim.keymap.set('n', '<C-x>', ':!git branch -a<CR>', {noremap = true, silent = true}) -- (git branch) Ctrl + b [ Lists all branches ]
 vim.keymap.set('n', '<C-s>', function()
   vim.ui.input({ prompt = "Enter branch name to switch to: " }, function(branch)
     if branch and branch ~= "" then
