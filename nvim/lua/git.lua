@@ -127,23 +127,36 @@ vim.keymap.set('n', '<leader>hr', ':Gitsigns reset_hunk<CR>', { noremap = true, 
 vim.keymap.set('n', '<leader>hp', ':Gitsigns preview_hunk<CR>', { noremap = true, silent = true })
 
 -- Git Keybindings
+vim.keymap.set('n', '<M-i>', ':!git init<CR>', {noremap = true, silent = true}) -- (git init) Alt + i
+vim.keymap.set('n', '<M-c>', ':!git clone<CR>', {noremap = true, silent = true}) -- (git clone) Alt + c
+
+vim.keymap.set('n', '<M-s>', ':!git status<CR>', {noremap = true, silent = true}) -- (git status) Alt + s
+vim.keymap.set({'n','c'}, '<C-a>', git_add, { noremap = true, silent = true }) -- (git add) Ctrl + a [ Stages Changes to commit ]
+vim.keymap.set('n', '<C-c>', git_commit, { noremap = true, silent = true }) -- (git commit) Ctrl + c [ Saves Changes with a descriptive message ]
+
+vim.keymap.set('n', '<C-b>', function()
+  vim.ui.input({ prompt = "Enter new branch name: " }, function(branch)
+    if branch and branch ~= "" then
+      vim.cmd(':!git checkout -b ' .. branch .. ' && git push --set-upstream origin ' .. branch)
+    end
+  end)
+end, { noremap = true, silent = true }) -- (git checkout -< branch >) Ctrl + b [ Create new branch ]
+
+vim.keymap.set('n', '<C-x>', ':!git branch -a<CR>', {noremap = true, silent = true}) -- (git branch) Ctrl + b [ Lists all branches ]
+vim.keymap.set('n', '<C-s>', function()
+  vim.ui.input({ prompt = "Enter branch name to switch to: " }, function(branch)
+    if branch and branch ~= "" then
+      vim.cmd('!git switch ' .. branch)
+    end
+  end)
+end, { noremap = true, silent = true })
+
 vim.keymap.set('n', '<C-l>', ':!git pull<CR>', { noremap = true, silent = true })
-vim.keymap.set({'n','c'}, '<C-a>', git_add, { noremap = true, silent = true })
-vim.keymap.set('n', '<C-c>', git_commit, { noremap = true, silent = true })
 vim.keymap.set('n', '<C-p>', ':lua GitPushWithAuthCheck()<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<C-f>', ':!git fetch<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<C-r>', ':!git fetch && git pull --rebase && git push<CR>', { noremap = true, silent = true })
 
--- Git Create New Branch
-local function git_create_branch()
-  input({prompt = "Enter new branch name: "}, function(branch)
-    if branch then
-      vim.cmd('!git checkout -b ' .. branch .. ' && git push --set-upstream origin ' .. branch)
-    end
-  end)
-end
-
-vim.keymap.set('n', '<C-b>', git_create_branch, { noremap = true, silent = true })
+vim.keymap.set("n", "<C-m>", ":!git merge<Space>", { noremap = true, silent = true }) -- (git merge) Ctrl + m
 
 -- Lualine configuration
 require('lualine').setup {
