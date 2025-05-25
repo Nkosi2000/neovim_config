@@ -126,6 +126,8 @@ vim.keymap.set('n', '<leader>hu', ':Gitsigns undo_stage_hunk<CR>', { noremap = t
 vim.keymap.set('n', '<leader>hr', ':Gitsigns reset_hunk<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<leader>hp', ':Gitsigns preview_hunk<CR>', { noremap = true, silent = true })
 
+vim.keymap.set("n", "<M-t>", ":terminal<CR>", { noremap = true, silent = true })
+
 -- Git Keybindings
 vim.keymap.set('n', '<M-i>', ':!git init<CR>', {noremap = true, silent = true}) -- (git init) Alt + i
 vim.keymap.set('n', '<M-c>', ':!git clone<CR>', {noremap = true, silent = true}) -- (git clone) Alt + c
