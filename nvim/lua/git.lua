@@ -156,7 +156,7 @@ vim.keymap.set('n', '<C-p>', ':lua GitPushWithAuthCheck()<CR>', { noremap = true
 vim.keymap.set('n', '<C-f>', ':!git fetch<CR>', { noremap = true, silent = true })
 vim.keymap.set('n', '<C-r>', ':!git fetch && git pull --rebase && git push<CR>', { noremap = true, silent = true })
 
-
+vim.keymap.set("n", "<C-m>", ":!git merge<Space>", { noremap = true, silent = true }) -- (git merge) Ctrl + m
 
 -- Lualine configuration
 require('lualine').setup {
